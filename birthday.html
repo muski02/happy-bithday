@@ -1,0 +1,2398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Something I Made For You 💖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ============================================================
+   CSS CUSTOM PROPERTIES & RESET
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0608;
+  --bg2:#120b10;
+  --rose:#e8547a;
+  --blush:#f7a8be;
+  --gold:#f0c060;
+  --cream:#fdf4ec;
+  --text:#f5e6ee;
+  --muted:#b8809a;
+  --glow:rgba(232,84,122,0.4);
+  --glow2:rgba(240,192,96,0.3);
+  --card-bg:rgba(255,255,255,0.04);
+  --card-border:rgba(232,84,122,0.2);
+  --font-display:'Playfair Display',serif;
+  --font-body:'Cormorant Garamond',serif;
+  --font-ui:'Poppins',sans-serif;
+  --transition:0.6s cubic-bezier(0.4,0,0.2,1);
+}
+body.light-mode{
+  --bg:#fdf0f5;
+  --bg2:#fff5f8;
+  --text:#3a1525;
+  --muted:#b06080;
+  --card-bg:rgba(255,255,255,0.7);
+  --card-border:rgba(232,84,122,0.3);
+  --glow:rgba(232,84,122,0.25);
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:18px;
+  line-height:1.7;
+  overflow-x:hidden;
+  transition:background var(--transition),color var(--transition);
+  cursor:default;
+}
+/* Custom cursor */
+.cursor{
+  width:12px;height:12px;
+  background:var(--rose);
+  border-radius:50%;
+  position:fixed;top:0;left:0;
+  pointer-events:none;
+  z-index:99999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.15s,width 0.3s,height 0.3s,opacity 0.3s;
+  mix-blend-mode:screen;
+}
+.cursor-ring{
+  width:32px;height:32px;
+  border:1px solid var(--rose);
+  border-radius:50%;
+  position:fixed;top:0;left:0;
+  pointer-events:none;
+  z-index:99998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.4s cubic-bezier(0.4,0,0.2,1),width 0.3s,height 0.3s,opacity 0.3s;
+  opacity:0.5;
+}
+
+/* ============================================================
+   FLOATING PARTICLES
+   ============================================================ */
+#particles-canvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;opacity:0.6;
+}
+
+/* ============================================================
+   LANDING PAGE
+   ============================================================ */
+#landing{
+  position:fixed;inset:0;
+  background:radial-gradient(ellipse at 50% 60%,#1a0812 0%,#070305 70%);
+  z-index:1000;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:40px;
+  transition:opacity 1.5s ease,transform 1.5s ease;
+}
+#landing.fade-out{opacity:0;transform:scale(1.05);pointer-events:none}
+.landing-text{
+  font-family:var(--font-display);
+  font-size:clamp(1.3rem,4vw,2.2rem);
+  color:var(--cream);
+  text-align:center;
+  opacity:0;
+  min-height:3em;
+  max-width:600px;
+  padding:0 20px;
+  letter-spacing:0.02em;
+  line-height:1.5;
+  font-style:italic;
+}
+.landing-text.visible{opacity:1;transition:opacity 1.2s ease}
+.cursor-blink{
+  display:inline-block;
+  width:2px;height:1.1em;
+  background:var(--rose);
+  margin-left:3px;
+  vertical-align:text-bottom;
+  animation:blink 1s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Heart Hold Button */
+#heart-hold{
+  position:relative;
+  width:120px;height:120px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  opacity:0;
+  background: transparent;
+  transition:opacity 1s ease;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+#heart-hold.visible{opacity:1}
+.heart-svg{
+  width:80px;
+  height:80px;
+  background: transparent;
+  display: block;
+  filter:none;
+  overflow: visible;
+  transition:transform 0.3s;
+  animation:heartPulse 2s ease-in-out infinite;
+}
+@keyframes heartPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.08)}
+}
+/* ❤️ NEW HEART GLOW FIX */
+.heart-glow{
+  position:absolute;
+  width:140px;
+  height:140px;
+  background:radial-gradient(circle, rgba(232,84,122,0.5) 0%, transparent 70%);
+  border-radius:50%;
+  filter:blur(25px);
+  z-index:-1;
+}
+#heart-hold:active .heart-svg,#heart-hold.holding .heart-svg{
+  animation:none;
+}
+.hold-ring{
+  position:absolute;
+  width:110px;height:110px;
+  border:2px solid var(--rose);
+  border-radius:50%;
+  opacity:0;
+  transform:scale(0.8);
+  transition:opacity 0.5s,transform 0.5s;
+}
+#heart-hold.holding .hold-ring{opacity:0.7;transform:scale(1.1)}
+.hold-progress{
+  position:absolute;
+  width:110px;height:110px;
+  border-radius:50%;
+  background:conic-gradient(var(--rose) 0deg, transparent 0deg);
+  opacity:0;
+  transition:opacity 0.3s;
+}
+#heart-hold.holding .hold-progress{opacity:0.3}
+.hold-hint{
+  font-family:var(--font-ui);
+  font-size:0.75rem;
+  letter-spacing:0.15em;
+  color:var(--muted);
+  text-transform:uppercase;
+  opacity:0;
+  position:absolute;
+  bottom:-30px;
+  white-space:nowrap;
+  transition:opacity 0.5s;
+}
+#heart-hold.visible .hold-hint{opacity:1}
+
+/* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+#theme-toggle{
+  position:fixed;top:20px;right:20px;z-index:500;
+  display:none;
+  align-items:center;gap:10px;
+  font-family:var(--font-ui);font-size:0.7rem;
+  color:var(--muted);letter-spacing:0.05em;
+}
+#theme-toggle.visible{display:flex}
+.toggle-track{
+  width:48px;height:26px;
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:13px;
+  position:relative;cursor:pointer;
+  transition:background 0.3s;
+}
+.toggle-thumb{
+  width:20px;height:20px;
+  background:var(--rose);
+  border-radius:50%;
+  position:absolute;top:2px;left:3px;
+  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+body.light-mode .toggle-thumb{transform:translateX(22px)}
+
+/* ============================================================
+   MAIN SITE
+   ============================================================ */
+#main-site{
+  position:relative;z-index:1;
+  opacity:0;
+  transform:translateY(30px);
+  transition:opacity 1.5s ease 0.5s, transform 1.5s ease 0.5s;
+  padding-bottom:100px;
+}
+#main-site.visible{opacity:1;transform:translateY(0)}
+
+/* Section headings */
+.section-title{
+  font-family:var(--font-display);
+  font-size:clamp(1.8rem,5vw,3rem);
+  text-align:center;
+  color:var(--rose);
+  margin-bottom:0.3em;
+  font-style:italic;
+}
+.section-sub{
+  text-align:center;
+  color:var(--muted);
+  font-family:var(--font-ui);
+  font-size:0.8rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  margin-bottom:3rem;
+}
+section{
+  padding:80px 20px;
+  max-width:900px;
+  margin:0 auto;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+#hero{
+  min-height:80vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding-top:100px;
+}
+.hero-eyebrow{
+  font-family:var(--font-ui);font-size:0.75rem;
+  letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:1.5rem;
+  animation:fadeUp 1s ease both;
+}
+.hero-title{
+  font-family:var(--font-display);
+  font-size:clamp(2.5rem,8vw,5.5rem);
+  line-height:1.1;
+  font-style:italic;
+  background:linear-gradient(135deg,var(--cream) 0%,var(--blush) 50%,var(--gold) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:fadeUp 1s ease 0.2s both;
+  margin-bottom:1.5rem;
+}
+.hero-sub{
+  font-family:var(--font-body);
+  font-size:1.2rem;color:var(--muted);
+  font-style:italic;max-width:450px;
+  animation:fadeUp 1s ease 0.4s both;
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(25px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.divider{
+  width:60px;height:1px;
+  background:linear-gradient(to right,transparent,var(--rose),transparent);
+  margin:40px auto;
+}
+/* ============================================================
+   GIFT CARDS — ENVELOPE STYLE
+   ============================================================ */
+#gifts{padding-top:40px}
+.gifts-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:28px;
+  margin-top:20px;
+  perspective:1200px;
+}
+ 
+/* The whole card wrapper */
+.gift-card{
+  position:relative;
+  cursor:pointer;
+  animation:cardFloat 5s ease-in-out infinite;
+  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  transform-style:preserve-3d;
+}
+.gift-card:nth-child(2){animation-delay:1s}
+.gift-card:nth-child(3){animation-delay:2s}
+@keyframes cardFloat{
+  0%,100%{transform:translateY(0) rotate3d(1,0,0,0deg)}
+  50%{transform:translateY(-10px) rotate3d(1,0,0,1.5deg)}
+}
+.gift-card.opened{animation:none}
+.gift-card.shaking{animation:cardShake 0.45s ease both}
+@keyframes cardShake{
+  0%,100%{transform:translateX(0)rotate(0deg)}
+  15%{transform:translateX(-7px)rotate(-1.5deg)}
+  30%{transform:translateX(7px)rotate(1.5deg)}
+  45%{transform:translateX(-5px)rotate(-1deg)}
+  60%{transform:translateX(5px)rotate(1deg)}
+  75%{transform:translateX(-3px)rotate(-0.5deg)}
+}
+ 
+/* The card face */
+.gift-face{
+  position:relative;
+  border-radius:16px;
+  overflow:hidden;
+  padding:0;
+  min-height:300px;
+  display:flex;flex-direction:column;
+  transition:box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.gift-card:hover .gift-face{
+  transform:translateY(-4px) scale(1.01);
+}
+ 
+/* Per-card color themes */
+.gift-card:nth-child(1) .gift-face{
+  background:linear-gradient(160deg,#1c0614 0%,#2e0a1e 40%,#1a0510 100%);
+  box-shadow:0 8px 40px rgba(200,50,90,0.25), 0 2px 8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,150,170,0.1);
+  border:1px solid rgba(220,80,110,0.25);
+}
+.gift-card:nth-child(2) .gift-face{
+  background:linear-gradient(160deg,#0f0a1e 0%,#1e1240 40%,#0c0818 100%);
+  box-shadow:0 8px 40px rgba(120,90,220,0.25), 0 2px 8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(160,130,255,0.1);
+  border:1px solid rgba(140,100,240,0.25);
+}
+.gift-card:nth-child(3) .gift-face{
+  background:linear-gradient(160deg,#180a04 0%,#2e1408 40%,#150802 100%);
+  box-shadow:0 8px 40px rgba(200,130,50,0.2), 0 2px 8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,190,100,0.08);
+  border:1px solid rgba(210,140,60,0.22);
+}
+.gift-card:nth-child(4) .gift-face{
+  background:linear-gradient(160deg,#041a18 0%,#08332f 40%,#031210 100%);
+  box-shadow:0 8px 40px rgba(20,200,170,0.2), 0 2px 8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(120,255,220,0.1);
+  border:1px solid rgba(20,200,170,0.25);
+}
+
+.gift-card:nth-child(5) .gift-face{
+  background:linear-gradient(160deg,#061426 0%,#0a2a4a 40%,#030d18 100%);
+  box-shadow:0 8px 40px rgba(80,150,255,0.2), 0 2px 8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(150,200,255,0.1);
+  border:1px solid rgba(80,150,255,0.25);
+}
+
+/* hover glow */
+.gift-card:nth-child(4):hover .gift-face{
+  box-shadow:0 16px 60px rgba(20,200,170,0.35), 0 4px 16px rgba(0,0,0,0.7);
+}
+.gift-card:nth-child(5):hover .gift-face{
+  box-shadow:0 16px 60px rgba(80,150,255,0.35), 0 4px 16px rgba(0,0,0,0.7);
+}
+.gift-card:nth-child(1):hover .gift-face{box-shadow:0 16px 60px rgba(220,70,100,0.4), 0 4px 16px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,150,170,0.15)}
+.gift-card:nth-child(2):hover .gift-face{box-shadow:0 16px 60px rgba(130,100,230,0.4), 0 4px 16px rgba(0,0,0,0.7), inset 0 1px 0 rgba(160,130,255,0.15)}
+.gift-card:nth-child(3):hover .gift-face{box-shadow:0 16px 60px rgba(210,140,60,0.35), 0 4px 16px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,190,100,0.12)}
+ 
+/* Envelope flap at top */
+.gift-flap{
+  position:absolute;top:0;left:0;right:0;
+  height:0;
+  border-left:133px solid transparent;
+  border-right:133px solid transparent;
+  transform-origin:top center;
+  transition:transform 0.7s cubic-bezier(0.4,0,0.2,1), opacity 0.5s ease;
+  z-index:5;
+}
+.gift-card:nth-child(1) .gift-flap{border-top:90px solid rgba(180,40,70,0.45)}
+.gift-card:nth-child(2) .gift-flap{border-top:90px solid rgba(100,70,200,0.4)}
+.gift-card:nth-child(3) .gift-flap{border-top:90px solid rgba(180,110,30,0.4)}
+.gift-card:nth-child(4) .gift-flap{border-top:90px solid rgba(20,200,170,0.4)}
+.gift-card:nth-child(5) .gift-flap{border-top:90px solid rgba(80,150,255,0.4)}
+.gift-card.opened .gift-flap{transform:rotateX(-175deg);opacity:0}
+ 
+/* Wax seal on flap */
+.wax-seal{
+  position:absolute;top:28px;left:50%;transform:translateX(-50%);
+  width:46px;height:46px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  z-index:10;
+  transition:transform 0.5s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s;
+}
+.gift-card:nth-child(1) .wax-seal{background:radial-gradient(circle at 35% 35%,#e8607a,#a02040);box-shadow:0 2px 12px rgba(180,30,60,0.6),inset 0 1px 0 rgba(255,200,210,0.3)}
+.gift-card:nth-child(2) .wax-seal{background:radial-gradient(circle at 35% 35%,#9070e0,#4428a0);box-shadow:0 2px 12px rgba(90,50,200,0.6),inset 0 1px 0 rgba(200,180,255,0.3)}
+.gift-card:nth-child(3) .wax-seal{background:radial-gradient(circle at 35% 35%,#e0a030,#904010);box-shadow:0 2px 12px rgba(160,100,20,0.6),inset 0 1px 0 rgba(255,220,140,0.3)}
+.gift-card:nth-child(4) .wax-seal{background:radial-gradient(circle at 35% 35%,#1abc9c,#0e6655);box-shadow:0 2px 12px rgba(20,200,170,0.6),inset 0 1px 0 rgba(180,255,240,0.3)}
+.gift-card:nth-child(5) .wax-seal{background:radial-gradient(circle at 35% 35%,#5dade2,#1f618d);box-shadow:0 2px 12px rgba(80,150,255,0.6),inset 0 1px 0 rgba(200,220,255,0.3)}
+.wax-seal svg{width:22px;height:22px;opacity:0.9}
+.gift-card.opened .wax-seal{transform:translateX(-50%) scale(0);opacity:0}
+ 
+/* Envelope inner lines (folded paper look) */
+.gift-envelope-lines{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  pointer-events:none;z-index:1;
+  overflow:hidden;
+  border-radius:16px;
+}
+.gift-envelope-lines::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:100%;
+  background:
+    linear-gradient(135deg,transparent 49.5%,rgba(255,255,255,0.04) 49.5%,rgba(255,255,255,0.04) 50.5%,transparent 50.5%),
+    linear-gradient(225deg,transparent 49.5%,rgba(255,255,255,0.04) 49.5%,rgba(255,255,255,0.04) 50.5%,transparent 50.5%);
+}
+ 
+/* Card inner content area */
+.gift-inner{
+  position:relative;
+  z-index:3;
+  padding:110px 28px 28px;
+  display:flex;flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:12px;
+  flex:1;
+}
+ 
+/* Ornamental SVG art per card */
+.gift-ornament{
+  width:80px;height:80px;
+  margin-bottom:4px;
+  opacity:0.85;
+  transition:opacity 0.3s, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.gift-card:hover .gift-ornament{opacity:1;transform:scale(1.08)}
+.gift-card.opened .gift-ornament{animation:ornamentPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both}
+@keyframes ornamentPop{
+  0%{transform:scale(0.5);opacity:0}
+  60%{transform:scale(1.15)}
+  100%{transform:scale(1);opacity:1}
+}
+ 
+/* Card number */
+.gift-number{
+  font-family:var(--font-ui);
+  font-size:0.6rem;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+}
+.gift-card:nth-child(1) .gift-number{color:rgba(230,120,150,0.6)}
+.gift-card:nth-child(2) .gift-number{color:rgba(160,130,255,0.6)}
+.gift-card:nth-child(3) .gift-number{color:rgba(220,160,70,0.6)}
+.gift-card:nth-child(4) .gift-number{color:rgba(120,255,220,0.6)}
+.gift-card:nth-child(5) .gift-number{color:rgba(150,200,255,0.6)}
+ 
+/* Card label (main text) */
+.gift-label{
+  font-family:var(--font-display);
+  font-size:1.05rem;
+  font-style:italic;
+  line-height:1.4;
+  max-width:200px;
+}
+.gift-card:nth-child(1) .gift-label{color:#f5c5d0}
+.gift-card:nth-child(2) .gift-label{color:#d0c0ff}
+.gift-card:nth-child(3) .gift-label{color:#f5d5a0}
+.gift-card:nth-child(4) .gift-label{color:#aaf5e5}
+.gift-card:nth-child(5) .gift-label{color:#cfe6ff}
+ 
+/* Status indicator */
+.gift-status{
+  display:flex;align-items:center;gap:7px;
+  font-family:var(--font-ui);font-size:0.65rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  margin-top:6px;
+  padding:5px 14px;
+  border-radius:50px;
+  transition:all 0.4s ease;
+}
+.gift-card:nth-child(1) .gift-status{color:rgba(220,100,130,0.7);border:1px solid rgba(220,100,130,0.2);background:rgba(220,100,130,0.06)}
+.gift-card:nth-child(2) .gift-status{color:rgba(150,120,255,0.7);border:1px solid rgba(150,120,255,0.2);background:rgba(150,120,255,0.06)}
+.gift-card:nth-child(3) .gift-status{color:rgba(210,150,60,0.7);border:1px solid rgba(210,150,60,0.2);background:rgba(210,150,60,0.06)}
+.gift-card:nth-child(4) .gift-status{color:rgba(120,255,220,0.7);border:1px solid rgba(120,255,220,0.2);background:rgba(120,255,220,0.06)}
+.gift-card:nth-child(5) .gift-status{color:rgba(150,200,255,0.7);border:1px solid rgba(150,200,255,0.2);background:rgba(150,200,255,0.06)}
+.gift-dot{
+  width:5px;height:5px;border-radius:50%;
+  animation:dotPulse 2s ease-in-out infinite;
+}
+.gift-card:nth-child(1) .gift-dot{background:rgba(230,100,130,0.8)}
+.gift-card:nth-child(2) .gift-dot{background:rgba(150,120,255,0.8)}
+.gift-card:nth-child(3) .gift-dot{background:rgba(210,150,60,0.8)}
+.gift-card:nth-child(4) .gift-dot{background:rgba(120,255,220,0.8)}
+.gift-card:nth-child(5) .gift-dot{background:rgba(150,200,255,0.8)}
+@keyframes dotPulse{0%,100%{opacity:0.5;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+.gift-card.opened .gift-status{opacity:0.5}
+.gift-card.opened .gift-dot{animation:none;background:var(--rose)}
+ 
+/* Shimmer sweep on hover */
+.gift-face::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.04) 50%,transparent 60%);
+  transform:translateX(-100%);
+  transition:transform 0.7s ease;
+  pointer-events:none;border-radius:16px;
+  z-index:6;
+}
+.gift-card:hover .gift-face::after{transform:translateX(100%)}
+ 
+/* Corner ornaments */
+.gift-corner{
+  position:absolute;
+  width:20px;height:20px;
+  opacity:0.3;
+  transition:opacity 0.3s;
+}
+.gift-card:hover .gift-corner{opacity:0.6}
+.gift-corner.tl{top:8px;left:10px}
+.gift-corner.tr{top:8px;right:10px;transform:scaleX(-1)}
+.gift-corner.bl{bottom:8px;left:10px;transform:scaleY(-1)}
+.gift-corner.br{bottom:8px;right:10px;transform:scale(-1,-1)}
+ 
+/* Light mode adjustments */
+body.light-mode .gift-card:nth-child(1) .gift-face{
+  background:linear-gradient(160deg,#fff0f4 0%,#ffe0ea 40%,#fff5f8 100%);
+  border:1px solid rgba(220,80,110,0.2);
+  box-shadow:0 8px 40px rgba(200,50,90,0.12), 0 2px 8px rgba(180,80,100,0.08);
+}
+body.light-mode .gift-card:nth-child(2) .gift-face{
+  background:linear-gradient(160deg,#f5f0ff 0%,#ede0ff 40%,#f8f5ff 100%);
+  border:1px solid rgba(140,100,240,0.2);
+  box-shadow:0 8px 40px rgba(120,90,220,0.12), 0 2px 8px rgba(100,70,180,0.08);
+}
+body.light-mode .gift-card:nth-child(3) .gift-face{
+  background:linear-gradient(160deg,#fff8ee 0%,#ffefd0 40%,#fffbf5 100%);
+  border:1px solid rgba(210,140,60,0.2);
+  box-shadow:0 8px 40px rgba(200,130,50,0.1), 0 2px 8px rgba(160,100,20,0.08);
+}
+body.light-mode .gift-label{color:#2a1030!important}
+body.light-mode .gift-number{opacity:0.6}
+body.light-mode .gift-card:nth-child(1) .gift-flap{border-top-color:rgba(220,80,110,0.2)}
+body.light-mode .gift-card:nth-child(2) .gift-flap{border-top-color:rgba(130,90,230,0.2)}
+body.light-mode .gift-card:nth-child(3) .gift-flap{border-top-color:rgba(200,130,40,0.18)}
+body.light-mode .gift-card:nth-child(4) .gift-flap{border-top-color:rgba(20,200,170,0.2)}
+body.light-mode .gift-card:nth-child(5) .gift-flap{border-top-color:rgba(80,150,255,0.2)}
+body.light-mode .gift-envelope-lines::before{opacity:0.3}
+ 
+
+/* ============================================================
+   GIFT MODAL / OVERLAY
+   ============================================================ */
+.gift-overlay{
+  position:fixed;inset:0;
+  background:rgba(5,2,5,0.92);
+  backdrop-filter:blur(16px);
+  z-index:800;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.5s ease;
+}
+.gift-overlay.active{opacity:1;pointer-events:all}
+.gift-modal{
+  background:linear-gradient(145deg,rgba(30,8,22,0.98),rgba(20,5,15,0.98));
+  border:1px solid var(--card-border);
+  border-radius:20px;
+  max-width:600px;width:100%;
+  max-height:90vh;overflow-y:auto;
+  padding:40px;
+  position:relative;
+  box-shadow:0 0 60px var(--glow),0 0 120px rgba(232,84,122,0.1);
+  transform:scale(0.95)translateY(20px);
+  transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.gift-overlay.active .gift-modal{transform:scale(1)translateY(0)}
+.modal-close{
+  position:absolute;top:16px;right:20px;
+  background:none;border:none;color:var(--muted);
+  font-size:1.5rem;cursor:pointer;
+  transition:color 0.2s,transform 0.2s;
+  line-height:1;
+}
+.modal-close:hover{color:var(--rose);transform:rotate(90deg)}
+.modal-title{
+  font-family:var(--font-display);
+  font-size:1.6rem;font-style:italic;
+  color:var(--blush);margin-bottom:8px;
+}
+.modal-divider{
+  width:40px;height:1px;
+  background:var(--rose);margin:12px 0 24px;
+}
+/* Letter */
+.letter-text{
+  font-family:var(--font-body);
+  font-size:1.05rem;line-height:1.9;
+  color:var(--text);white-space:pre-wrap;
+  min-height:80px;
+}
+/* Voice note */
+.voice-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:none;
+  border:1px solid var(--rose);
+  color:var(--rose);
+  border-radius:50px;
+  padding:10px 22px;
+  font-family:var(--font-ui);font-size:0.8rem;
+  letter-spacing:0.05em;cursor:pointer;
+  margin:20px 0;
+  transition:background 0.3s,color 0.3s,box-shadow 0.3s;
+}
+.voice-btn:hover{
+  background:var(--rose);color:white;
+  box-shadow:0 0 20px var(--glow);
+}
+.voice-btn .pulse-icon{
+  width:10px;height:10px;
+  background:currentColor;border-radius:50%;
+  animation:pulse-dot 1.5s ease-in-out infinite;
+}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:0.6}}
+/* Polaroids */
+.polaroids-row{
+  display:flex;flex-wrap:wrap;gap:15px;justify-content:center;
+  margin-top:20px;
+}
+.polaroid{
+  width:130px;
+  background:white;
+  padding:10px 10px 30px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  cursor:pointer;
+  transition:transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  transform-style:preserve-3d;
+  position:relative;
+}
+.polaroid:nth-child(1){transform:rotate(-3deg)}
+.polaroid:nth-child(2){transform:rotate(2deg)}
+.polaroid:nth-child(3){transform:rotate(-1.5deg)}
+.polaroid:nth-child(4){transform:rotate(3.5deg)}
+.polaroid.flipped:nth-child(1){transform:rotate(-3deg)rotateY(180deg)}
+.polaroid.flipped:nth-child(2){transform:rotate(2deg)rotateY(180deg)}
+.polaroid.flipped:nth-child(3){transform:rotate(-1.5deg)rotateY(180deg)}
+.polaroid.flipped:nth-child(4){transform:rotate(3.5deg)rotateY(180deg)}
+.polaroid-front,.polaroid-back{
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+.polaroid-front img{
+  width:100%;height:100px;object-fit:cover;display:block;
+  background:linear-gradient(135deg,#3a1025,#1a0818);
+}
+.polaroid-back{
+  position:absolute;inset:0;
+  background:#fdf4ec;
+  display:flex;align-items:center;justify-content:center;
+  transform:rotateY(180deg);
+  padding:10px;
+}
+.polaroid-back p{
+  font-family:var(--font-display);
+  font-size:0.65rem;color:#3a1525;
+  text-align:center;font-style:italic;line-height:1.5;
+}
+
+/* ============================================================
+   MINI GAME
+   ============================================================ */
+#game{text-align:center}
+#game-area{
+  position:relative;
+  width:100%;max-width:500px;
+  height:400px;
+  margin:0 auto;
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:20px;
+  overflow:hidden;
+}
+#game-start-btn,#game-restart-btn{
+  background:none;
+  border:1px solid var(--rose);
+  color:var(--rose);
+  border-radius:50px;
+  padding:12px 30px;
+  font-family:var(--font-ui);
+  font-size:0.85rem;letter-spacing:0.1em;
+  cursor:pointer;
+  transition:background 0.3s,box-shadow 0.3s,color 0.3s;
+  margin-top:20px;
+}
+#game-start-btn:hover,#game-restart-btn:hover{
+  background:var(--rose);color:white;
+  box-shadow:0 0 25px var(--glow);
+}
+.game-score{
+  font-family:var(--font-ui);font-size:0.8rem;
+  color:var(--muted);letter-spacing:0.1em;
+  margin-top:15px;
+}
+.game-heart{
+  position:absolute;
+  font-size:1.8rem;
+  cursor:pointer;
+  user-select:none;
+  animation:riseHeart linear forwards;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform 0.15s;
+  filter:drop-shadow(0 0 6px var(--rose));
+}
+.game-heart:active{transform:scale(0.7)}
+@keyframes riseHeart{
+  from{transform:translateY(0)rotate(var(--tilt,0deg));opacity:1}
+  to{transform:translateY(-420px)rotate(var(--tilt,0deg));opacity:0}
+}
+.game-message-popup{
+  position:absolute;
+  font-family:var(--font-display);
+  font-style:italic;font-size:0.85rem;
+  color:var(--blush);
+  pointer-events:none;
+  animation:popUp 1.5s ease forwards;
+  white-space:nowrap;
+  text-shadow:0 0 10px var(--rose);
+}
+@keyframes popUp{
+  0%{opacity:0;transform:translateY(0)scale(0.8)}
+  20%{opacity:1;transform:translateY(-10px)scale(1)}
+  80%{opacity:1;transform:translateY(-30px)scale(1)}
+  100%{opacity:0;transform:translateY(-50px)scale(0.9)}
+}
+#game-reward{
+  display:none;
+  padding:30px;
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:1.2rem;color:var(--blush);
+  text-align:center;
+}
+#game-reward.visible{display:block}
+.game-idle-msg{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-body);font-style:italic;
+  color:var(--muted);font-size:0.95rem;
+  pointer-events:none;
+}
+
+/* ============================================================
+   HIDDEN MESSAGES (Stars/Sparkles)
+   ============================================================ */
+#hidden-messages{
+  position:relative;min-height:300px;
+  display:flex;flex-direction:column;align-items:center;
+}
+.sparkle-field{
+  position:relative;width:100%;max-width:600px;height:250px;
+}
+.sparkle{
+  position:absolute;
+  cursor:pointer;
+  font-size:1rem;
+  transition:transform 0.3s,filter 0.3s;
+  user-select:none;
+  animation:twinkle 3s ease-in-out infinite;
+}
+.sparkle:hover{transform:scale(1.5);filter:drop-shadow(0 0 8px var(--gold))}
+@keyframes twinkle{0%,100%{opacity:0.4}50%{opacity:1}}
+.sparkle.revealed{color:var(--gold);animation:none;opacity:1}
+.hidden-msg-popup{
+  position:fixed;
+  bottom:30px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,rgba(30,8,22,0.97),rgba(15,4,12,0.97));
+  border:1px solid var(--rose);
+  border-radius:12px;
+  padding:16px 28px;
+  font-family:var(--font-display);font-style:italic;
+  font-size:1rem;color:var(--blush);
+  z-index:600;max-width:350px;text-align:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.4s,transform 0.4s;
+  transform:translateX(-50%)translateY(20px);
+  box-shadow:0 0 30px var(--glow);
+}
+.hidden-msg-popup.show{opacity:1;transform:translateX(-50%)translateY(0)}
+
+/* ============================================================
+   POLAROID WALL
+   ============================================================ */
+#polaroid-wall{overflow:visible}
+.wall-grid{
+  display:flex;flex-wrap:wrap;gap:20px;justify-content:center;
+  perspective:1000px;
+}
+.wall-polaroid{
+  width:150px;
+  background:white;
+  padding:12px 12px 36px;
+  box-shadow:0 6px 25px rgba(0,0,0,0.5);
+  cursor:pointer;
+  transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),box-shadow 0.3s;
+  transform-style:preserve-3d;
+  position:relative;
+}
+.wall-polaroid:nth-child(1){transform:rotate(-4deg)}
+.wall-polaroid:nth-child(2){transform:rotate(2.5deg) translateY(8px)}
+.wall-polaroid:nth-child(3){transform:rotate(-1deg) translateY(-5px)}
+.wall-polaroid:nth-child(4){transform:rotate(3deg)}
+.wall-polaroid:nth-child(5){transform:rotate(-2.5deg) translateY(10px)}
+.wall-polaroid:nth-child(6){transform:rotate(1.5deg) translateY(-3px)}
+.wall-polaroid.flipped:nth-child(1){transform:rotate(-4deg)rotateY(180deg)}
+.wall-polaroid.flipped:nth-child(2){transform:rotate(2.5deg)translateY(8px)rotateY(180deg)}
+.wall-polaroid.flipped:nth-child(3){transform:rotate(-1deg)translateY(-5px)rotateY(180deg)}
+.wall-polaroid.flipped:nth-child(4){transform:rotate(3deg)rotateY(180deg)}
+.wall-polaroid.flipped:nth-child(5){transform:rotate(-2.5deg)translateY(10px)rotateY(180deg)}
+.wall-polaroid.flipped:nth-child(6){transform:rotate(1.5deg)translateY(-3px)rotateY(180deg)}
+.wall-polaroid:hover{box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+.wall-polaroid .tape{
+  width:40px;height:14px;
+  background:rgba(255,255,230,0.5);
+  position:absolute;top:-7px;left:50%;transform:translateX(-50%);
+  border-radius:2px;
+}
+.wall-polaroid .p-front img{
+  width:100%;height:120px;object-fit:cover;display:block;
+  background:linear-gradient(135deg,#2a0e1e,#1a0818);
+}
+.wall-polaroid .p-front .p-label{
+  font-family:var(--font-display);
+  font-size:0.65rem;font-style:italic;
+  color:#3a1525;margin-top:8px;text-align:center;
+}
+.wall-polaroid .p-front,.wall-polaroid .p-back{
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+.wall-polaroid .p-back{
+  position:absolute;inset:0;
+  background:#fdf4ec;
+  transform:rotateY(180deg);
+  display:flex;align-items:center;justify-content:center;
+  padding:15px;border-radius:2px;
+}
+.wall-polaroid .p-back p{
+  font-family:var(--font-display);
+  font-size:0.7rem;color:#3a1525;
+  text-align:center;font-style:italic;line-height:1.6;
+}
+
+/* ============================================================
+   REASONS I LOVE YOU
+   ============================================================ */
+#reasons{text-align:center}
+.reason-btn{
+  background:none;
+  border:1px solid var(--rose);
+  color:var(--rose);
+  border-radius:50px;
+  padding:14px 35px;
+  font-family:var(--font-ui);
+  font-size:0.85rem;letter-spacing:0.1em;
+  cursor:pointer;
+  transition:background 0.3s,box-shadow 0.3s,color 0.3s;
+  margin-bottom:30px;
+}
+.reason-btn:hover{
+  background:var(--rose);color:white;
+  box-shadow:0 0 30px var(--glow);
+}
+.reason-card{
+  max-width:500px;margin:0 auto;
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:16px;padding:35px 30px;
+  position:relative;min-height:140px;
+  display:flex;align-items:center;justify-content:center;
+}
+.reason-number{
+  position:absolute;top:16px;right:20px;
+  font-family:var(--font-ui);font-size:0.7rem;
+  color:var(--muted);letter-spacing:0.1em;
+}
+.reason-text{
+  font-family:var(--font-display);
+  font-size:1.4rem;font-style:italic;
+  color:var(--blush);text-align:center;
+  line-height:1.5;
+  opacity:0;transform:translateY(15px);
+  transition:opacity 0.6s ease,transform 0.6s ease;
+}
+.reason-text.show{opacity:1;transform:translateY(0)}
+.reason-icon{
+  font-size:1.5rem;margin-bottom:8px;display:block;
+}
+
+/* ============================================================
+   FINAL SECRET SECTION
+   ============================================================ */
+#secret-hint{
+  text-align:center;padding:40px 20px;
+  opacity:0;pointer-events:none;
+  transition:opacity 1s ease;
+  font-family:var(--font-body);font-style:italic;
+  color:var(--muted);
+}
+#secret-hint.visible{opacity:1;pointer-events:all}
+#secret-box{
+  width:100px;height:100px;
+  margin:20px auto;
+  cursor:pointer;
+  position:relative;
+  transition:transform 0.3s;
+}
+#secret-box:hover{transform:scale(1.05)}
+#secret-section{
+  display:none;
+  padding:60px 20px;max-width:700px;margin:0 auto;
+  text-align:center;
+}
+#secret-section.revealed{display:block;animation:fadeUp 1s ease both}
+.video-container{
+  position:relative;
+  padding-bottom:56.25%;height:0;
+  border-radius:16px;overflow:hidden;
+  margin:30px 0;
+  border:1px solid var(--card-border);
+  box-shadow:0 0 40px var(--glow);
+}
+.video-container iframe,.video-container video{
+  position:absolute;top:0;left:0;width:100%;height:100%;border:none;
+}
+.final-letter{
+  font-family:var(--font-display);
+  font-size:1.15rem;font-style:italic;
+  line-height:2;color:var(--text);
+  max-width:550px;margin:0 auto;
+  text-align:center;
+}
+
+/* Confetti canvas */
+#confetti-canvas{
+  position:fixed;inset:0;
+  pointer-events:none;z-index:900;
+  display:none;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--rose);border-radius:2px}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:600px){
+  .gifts-grid{grid-template-columns:1fr}
+  .gift-box{max-width:240px;margin:0 auto}
+  .polaroid{width:110px}
+  .wall-polaroid{width:130px}
+  .gift-modal{padding:25px}
+  section{padding:60px 15px}
+}
+
+/* Light mode overrides */
+body.light-mode .gift-modal{
+  background:linear-gradient(145deg,rgba(255,240,248,0.98),rgba(255,250,253,0.98));
+  border-color:rgba(232,84,122,0.3);
+}
+body.light-mode .letter-text{color:#3a1525}
+body.light-mode .reason-card{background:rgba(255,255,255,0.8)}
+body.light-mode #game-area{background:rgba(255,255,255,0.5)}
+body.light-mode .wall-polaroid{box-shadow:0 6px 25px rgba(180,100,120,0.2)}
+body.light-mode #landing{background:radial-gradient(ellipse at 50% 60%,#ffdbe8 0%,#fff5f8 70%)}
+body.light-mode .landing-text{color:#3a1525}
+body.light-mode .hold-hint{color:#b06080}
+
+/* Progress bar at top */
+.progress-bar{
+  position:fixed;top:0;left:0;height:2px;
+  background:linear-gradient(to right,var(--rose),var(--gold));
+  z-index:600;width:0%;
+  transition:width 0.1s linear;
+  box-shadow:0 0 8px var(--rose);
+}
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- Reading progress bar -->
+<div class="progress-bar" id="progress-bar"></div>
+
+<!-- Particles canvas -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Confetti canvas -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ============================================================
+     LANDING PAGE
+     ============================================================ -->
+<div id="landing">
+  <div class="landing-text" id="landing-text"></div>
+  <div id="heart-hold">
+    <div class="heart-glow"></div>
+    <div class="hold-progress" id="hold-progress"></div>
+    <div class="hold-ring"></div>
+    <!-- Heart SVG -->
+    <svg class="heart-svg" viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 85 C50 85 5 52 5 27 C5 13 16 3 28 3 C37 3 45 9 50 18 C55 9 63 3 72 3 C84 3 95 13 95 27 C95 52 50 85 50 85Z"
+            fill="#e8547a" stroke="#f7a8be" stroke-width="1.5"
+            style="filter:drop-shadow(0 0 15px #e8547a)"/>
+    </svg>
+    <span class="hold-hint">Press and hold</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     THEME TOGGLE
+     ============================================================ -->
+<div id="theme-toggle">
+  <span id="theme-label">Missing you 🌙</span>
+  <div class="toggle-track" onclick="toggleTheme()">
+    <div class="toggle-thumb"></div>
+  </div>
+</div>
+
+<!-- Hidden message popup -->
+<div class="hidden-msg-popup" id="hidden-msg-popup"></div>
+
+<!-- ============================================================
+     GIFT OVERLAYS
+     ============================================================ -->
+<!-- Gift 1 -->
+<div class="gift-overlay" id="gift-overlay-1">
+  <div class="gift-modal">
+    <button class="modal-close" onclick="closeGift(1)">×</button>
+    <div class="modal-title">When You Miss Us…</div>
+    <div class="modal-divider"></div>
+    <!-- Letter -->
+    <div class="letter-text" id="letter-1"></div>
+    <!-- Voice note -->
+    <button class="voice-btn" onclick="playVoice(1)">
+      <span class="pulse-icon"></span>
+      Listen to me ❤️
+    </button>
+    <!-- Polaroids -->
+    <div class="polaroids-row" id="polaroids-1">
+      <!-- 
+        === REPLACE: Add your own image URLs below (src="YOUR_IMAGE_URL") ===
+        === REPLACE: Update the captions inside .polaroid-back <p> tags   ===
+      -->
+      <div class="polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="polaroid-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/61900580d972e484da5e667d513d8dd764e889e4/IMG_20231031_180616.jpg" alt="memory"/>
+        </div>
+        <div class="polaroid-back"><p>Our Iconic first pic together 💕</p></div>
+      </div>
+      <div class="polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="polaroid-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG-20250407-WA0010.jpg" alt="memory"/>
+        </div>
+        <div class="polaroid-back"><p>You & me, always 🌸</p></div>
+      </div>
+      <div class="polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="polaroid-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/Snapchat-989453644.jpg" alt="memory"/>
+        </div>
+        <div class="polaroid-back"><p>hehehehehehe</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gift 2 -->
+<div class="gift-overlay" id="gift-overlay-2">
+  <div class="gift-modal">
+    <button class="modal-close" onclick="closeGift(2)">×</button>
+    <div class="modal-title">When You Doubt My Love…</div>
+    <div class="modal-divider"></div>
+    <div class="letter-text" id="letter-2"></div>
+    <button class="voice-btn" onclick="playVoice(2)">
+      <span class="pulse-icon"></span>
+      Listen to me ❤️
+    </button>
+    <div class="polaroids-row" id="polaroids-2">
+      <div class="polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="polaroid-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG-20250927-WA0076.jpg" alt="memory"/>
+        </div>
+        <div class="polaroid-back"><p>You are my whole heart 💗</p></div>
+      </div>
+      <div class="polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="polaroid-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/Snapchat-946977771.jpg" alt="memory"/>
+        </div>
+        <div class="polaroid-back"><p>Every moment, choosing you 🌹</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gift 3 -->
+<div class="gift-overlay" id="gift-overlay-3">
+  <div class="gift-modal">
+    <button class="modal-close" onclick="closeGift(3)">×</button>
+    <div class="modal-title">Our Future…</div>
+    <div class="modal-divider"></div>
+    <div class="letter-text" id="letter-3"></div>
+    <button class="voice-btn" onclick="playVoice(3)">
+      <span class="pulse-icon"></span>
+      Listen to me ❤️
+    </button>
+    <div class="polaroids-row" id="polaroids-3">
+      <div class="polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="polaroid-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG-20250927-WA0097.jpg?token=GHSAT0AAAAAAD2JZRXBLJOCMWR5V2O24WGA2O5D5HA" alt="future"/>
+        </div>
+        <div class="polaroid-back"><p>I wanna hug you like this forever 💗</p></div>
+      </div>
+      <div class="polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="polaroid-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG_20251202_153138.jpg?token=GHSAT0AAAAAAD2JZRXAXOWHWLYQPBZ5B6RW2O5D76Q" alt="future"/>
+        </div>
+        <div class="polaroid-back"><p>Spend every birthday of ours together 🌸</p></div>
+      </div>
+      <div class="polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="polaroid-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/Snapchat-93439375.jpg?token=GHSAT0AAAAAAD2JZRXA44NS4GBJYYFNH7Q62O5ECLQ" alt="future"/>
+        </div>
+        <div class="polaroid-back"><p>I know our kids will be silly like us 🤣</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Gift 4-->
+<div class="gift-overlay" id="gift-overlay-4">
+    <div class="gift-modal">
+      <button class="modal-close" onclick="closeGift(4)">×</button>
+      <div class="modal-title">When You Feel Lost…</div>
+      <div class="modal-divider"></div>
+      <!-- Letter -->
+      <div class="letter-text" id="letter-4"></div>
+      <!-- Voice note -->
+      <button class="voice-btn" onclick="playVoice(4)">
+        <span class="pulse-icon"></span>
+        Listen to me ❤️
+      </button>
+      <!-- Polaroids -->
+      <div class="polaroids-row" id="polaroids-4">
+        <!-- 
+          === REPLACE: Add your own image URLs below (src="YOUR_IMAGE_URL") ===
+          === REPLACE: Update the captions inside .polaroid-back <p> tags   ===
+        -->
+        <div class="polaroid" onclick="this.classList.toggle('flipped')">
+          <div class="polaroid-front">
+            <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/20260414_231006.jpg" alt="memory"/>
+          </div>
+          <div class="polaroid-back"><p>mcd dates were the best 💕</p></div>
+        </div>
+        <div class="polaroid" onclick="this.classList.toggle('flipped')">
+          <div class="polaroid-front">
+            <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG-20251202-WA0057.jpg" alt="memory"/>
+          </div>
+          <div class="polaroid-back"><p>You & me, always 🌸</p></div>
+        </div>
+        <div class="polaroid" onclick="this.classList.toggle('flipped')">
+          <div class="polaroid-front">
+            <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG-20250504-WA0012.jpg" alt="memory"/>
+          </div>
+          <div class="polaroid-back"><p>Weird selfies always ✨</p></div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!--Gift 5-->
+<div class="gift-overlay" id="gift-overlay-5">
+    <div class="gift-modal">
+      <button class="modal-close" onclick="closeGift(5)">×</button>
+      <div class="modal-title">When You Need A Smile…</div>
+      <div class="modal-divider"></div>
+      <!-- Letter -->
+      <div class="letter-text" id="letter-5"></div>
+      <!-- Voice note -->
+      <button class="voice-btn" onclick="playVoice(5)">
+        <span class="pulse-icon"></span>
+        Listen to me ❤️
+      </button>
+      <!-- Polaroids -->
+      <div class="polaroids-row" id="polaroids-5">
+        <!-- 
+          === REPLACE: Add your own image URLs below (src="YOUR_IMAGE_URL") ===
+          === REPLACE: Update the captions inside .polaroid-back <p> tags   ===
+        -->
+        <div class="polaroid" onclick="this.classList.toggle('flipped')">
+          <div class="polaroid-front">
+            <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG-20260403-WA0004.jpg" alt="memory"/>
+          </div>
+          <div class="polaroid-back"><p>I hope isse dekh ke hasi aayi ho</p> 💕</p></div>
+        </div>
+        <div class="polaroid" onclick="this.classList.toggle('flipped')">
+          <div class="polaroid-front">
+            <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG-20250927-WA0094.jpg" alt="memory"/>
+          </div>
+          <div class="polaroid-back"><p>You & me, crazy always 🌸</p></div>
+        </div>
+        <div class="polaroid" onclick="this.classList.toggle('flipped')">
+          <div class="polaroid-front">
+            <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/Screenshot_20260331_235254_WhatsApp.jpg" alt="memory"/>
+          </div>
+          <div class="polaroid-back"><p>My Peppa pig✨</p></div>
+        </div>
+      </div>
+    </div>
+</div>
+  
+<!-- ============================================================
+     MAIN SITE
+     ============================================================ -->
+<div id="main-site">
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="hero-eyebrow">Happy Birthday, My Love</div>
+    <!-- === REPLACE: Change the name below === -->
+    <h1 class="hero-title">For You,<br/>Always You</h1>
+    <p class="hero-sub">I made this because words in a card were never going to be enough.</p>
+  </section>
+
+  <!-- Gift Boxes -->
+  <section id="gifts">
+    <div class="section-title">Letters For You</div>
+    <div class="section-sub">sealed with love — open each when the moment finds you</div>
+    <div class="gifts-grid">
+ 
+      <!-- Card 1 — Rose -->
+      <div class="gift-card" id="gbox-1" onclick="openGift(1)">
+        <div class="gift-face">
+          <div class="gift-envelope-lines"></div>
+          <!-- Flap -->
+          <div class="gift-flap"></div>
+          <!-- Wax seal -->
+          <div class="wax-seal">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3 C12 3 14 7 18 7 C18 11 16 15 12 17 C8 15 6 11 6 7 C10 7 12 3 12 3Z" stroke="rgba(255,200,210,0.9)" stroke-width="1.2" fill="none"/>
+              <circle cx="12" cy="10" r="1.5" fill="rgba(255,200,210,0.9)"/>
+            </svg>
+          </div>
+          <!-- Corner ornaments -->
+          <svg class="gift-corner tl" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,130,150,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,130,150,0.6)"/></svg>
+          <svg class="gift-corner tr" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,130,150,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,130,150,0.6)"/></svg>
+          <svg class="gift-corner bl" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,130,150,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,130,150,0.6)"/></svg>
+          <svg class="gift-corner br" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,130,150,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,130,150,0.6)"/></svg>
+          <!-- Inner content -->
+          <div class="gift-inner">
+            <!-- Ornament SVG -->
+            <svg class="gift-ornament" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="40" r="30" stroke="rgba(220,100,130,0.25)" stroke-width="0.8" stroke-dasharray="4 3"/>
+              <circle cx="40" cy="40" r="22" stroke="rgba(220,100,130,0.4)" stroke-width="0.8"/>
+              <path d="M40 22 C40 22 43.5 29 50 29 C50 35.5 47.5 42 40 46 C32.5 42 30 35.5 30 29 C36.5 29 40 22 40 22Z" stroke="rgba(240,160,175,0.9)" stroke-width="1.2" fill="rgba(220,80,110,0.12)"/>
+              <path d="M40 32 L40 44 M36 36 L44 36" stroke="rgba(240,160,175,0.5)" stroke-width="0.8"/>
+              <circle cx="40" cy="40" r="2.5" fill="rgba(240,160,175,0.8)"/>
+              <path d="M40 10 L41 14 L40 13 L39 14Z" fill="rgba(220,100,130,0.5)"/>
+              <path d="M40 70 L41 66 L40 67 L39 66Z" fill="rgba(220,100,130,0.5)"/>
+              <path d="M10 40 L14 41 L13 40 L14 39Z" fill="rgba(220,100,130,0.5)"/>
+              <path d="M70 40 L66 41 L67 40 L66 39Z" fill="rgba(220,100,130,0.5)"/>
+            </svg>
+            <span class="gift-number">✦ Letter I ✦</span>
+            <div class="gift-label">Open when you<br/>miss us</div>
+            <div class="gift-status">
+              <span class="gift-dot"></span>
+              <span id="gstatus-1">Sealed with love</span>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Card 2 — Violet -->
+      <div class="gift-card" id="gbox-2" onclick="openGift(2)">
+        <div class="gift-face">
+          <div class="gift-envelope-lines"></div>
+          <div class="gift-flap"></div>
+          <div class="wax-seal">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5 L13.5 9.5 L18 9.5 L14.5 12.5 L16 17 L12 14 L8 17 L9.5 12.5 L6 9.5 L10.5 9.5Z" stroke="rgba(200,180,255,0.9)" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <svg class="gift-corner tl" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(160,130,255,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(160,130,255,0.6)"/></svg>
+          <svg class="gift-corner tr" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(160,130,255,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(160,130,255,0.6)"/></svg>
+          <svg class="gift-corner bl" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(160,130,255,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(160,130,255,0.6)"/></svg>
+          <svg class="gift-corner br" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(160,130,255,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(160,130,255,0.6)"/></svg>
+          <div class="gift-inner">
+            <svg class="gift-ornament" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="40" r="30" stroke="rgba(140,110,240,0.25)" stroke-width="0.8" stroke-dasharray="4 3"/>
+              <circle cx="40" cy="40" r="22" stroke="rgba(140,110,240,0.4)" stroke-width="0.8"/>
+              <path d="M40 18 L43 29 L55 29 L45.5 36 L49 47 L40 40.5 L31 47 L34.5 36 L25 29 L37 29Z" stroke="rgba(190,160,255,0.9)" stroke-width="1.1" fill="rgba(120,90,220,0.1)" stroke-linejoin="round"/>
+              <circle cx="40" cy="40" r="3" fill="rgba(190,160,255,0.7)"/>
+              <circle cx="40" cy="25" r="1.2" fill="rgba(190,160,255,0.4)"/>
+              <circle cx="40" cy="55" r="1.2" fill="rgba(190,160,255,0.4)"/>
+              <circle cx="25" cy="40" r="1.2" fill="rgba(190,160,255,0.4)"/>
+              <circle cx="55" cy="40" r="1.2" fill="rgba(190,160,255,0.4)"/>
+            </svg>
+            <span class="gift-number">✦ Letter II ✦</span>
+            <div class="gift-label">Open when you<br/>doubt my love</div>
+            <div class="gift-status">
+              <span class="gift-dot"></span>
+              <span id="gstatus-2">Sealed with love</span>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Card 3 — Gold -->
+      <div class="gift-card" id="gbox-3" onclick="openGift(3)">
+        <div class="gift-face">
+          <div class="gift-envelope-lines"></div>
+          <div class="gift-flap"></div>
+          <div class="wax-seal">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="5" stroke="rgba(255,220,140,0.9)" stroke-width="1.2"/>
+              <path d="M12 4 L12 7 M12 17 L12 20 M4 12 L7 12 M17 12 L20 12 M6.3 6.3 L8.5 8.5 M15.5 15.5 L17.7 17.7 M17.7 6.3 L15.5 8.5 M8.5 15.5 L6.3 17.7" stroke="rgba(255,220,140,0.7)" stroke-width="1" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <svg class="gift-corner tl" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <svg class="gift-corner tr" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <svg class="gift-corner bl" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <svg class="gift-corner br" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <div class="gift-inner">
+            <svg class="gift-ornament" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="40" r="30" stroke="rgba(200,150,50,0.25)" stroke-width="0.8" stroke-dasharray="4 3"/>
+              <circle cx="40" cy="40" r="22" stroke="rgba(200,150,50,0.4)" stroke-width="0.8"/>
+              <circle cx="40" cy="40" r="8" stroke="rgba(240,190,100,0.8)" stroke-width="1.2"/>
+              <path d="M40 18 L40 24 M40 56 L40 62 M18 40 L24 40 M56 40 L62 40" stroke="rgba(240,190,100,0.5)" stroke-width="1" stroke-linecap="round"/>
+              <path d="M26.2 26.2 L30.4 30.4 M49.6 49.6 L53.8 53.8 M53.8 26.2 L49.6 30.4 M30.4 49.6 L26.2 53.8" stroke="rgba(240,190,100,0.35)" stroke-width="0.8" stroke-linecap="round"/>
+              <circle cx="40" cy="40" r="3.5" fill="rgba(240,190,100,0.8)"/>
+              <circle cx="40" cy="28" r="1.5" fill="rgba(240,190,100,0.5)"/>
+              <circle cx="52" cy="40" r="1.5" fill="rgba(240,190,100,0.5)"/>
+              <circle cx="40" cy="52" r="1.5" fill="rgba(240,190,100,0.5)"/>
+              <circle cx="28" cy="40" r="1.5" fill="rgba(240,190,100,0.5)"/>
+            </svg>
+            <span class="gift-number">✦ Letter III ✦</span>
+            <div class="gift-label">Open when you think<br/>about our future</div>
+            <div class="gift-status">
+              <span class="gift-dot"></span>
+              <span id="gstatus-3">Sealed with love</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 — Teal -->
+      <div class="gift-card" id="gbox-4" onclick="openGift(4)">
+        <div class="gift-face">
+          <div class="gift-envelope-lines"></div>
+          <div class="gift-flap"></div>
+          <div class="wax-seal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="rgba(120,255,220,0.7)" viewBox="0 0 256 256">
+                <path d="M249.94,120.24l-27.05-6.76a95.86,95.86,0,0,0-80.37-80.37l-6.76-27a8,8,0,0,0-15.52,0l-6.76,27.05a95.86,95.86,0,0,0-80.37,80.37l-27,6.76a8,8,0,0,0,0,15.52l27.05,6.76a95.86,95.86,0,0,0,80.37,80.37l6.76,27.05a8,8,0,0,0,15.52,0l6.76-27.05a95.86,95.86,0,0,0,80.37-80.37l27.05-6.76a8,8,0,0,0,0-15.52Zm-95.49,22.9L139.31,128l15.14-15.14L215,128Zm-52.9,0L41,128l60.57-15.14L116.69,128ZM205.77,109.2,158.6,97.4,146.8,50.23A79.88,79.88,0,0,1,205.77,109.2Zm-62.63-7.65L128,116.69l-15.14-15.14L128,41ZM109.2,50.23,97.4,97.4,50.23,109.2A79.88,79.88,0,0,1,109.2,50.23Zm-59,96.57L97.4,158.6l11.8,47.17A79.88,79.88,0,0,1,50.23,146.8Zm62.63,7.65L128,139.31l15.14,15.14L128,215Zm33.94,51.32,11.8-47.17,47.17-11.8A79.88,79.88,0,0,1,146.8,205.77Z">
+                </path>
+            </svg>
+          </div>
+          <svg class="gift-corner tl" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <svg class="gift-corner tr" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <svg class="gift-corner bl" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <svg class="gift-corner br" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <div class="gift-inner">
+            <svg class="gift-ornament" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Outer dashed ring -->
+                <circle cx="128" cy="128" r="118" stroke="rgba(100,255,200,0.2)" stroke-width="0.6" stroke-dasharray="10 7"/>
+                <!-- Inner solid ring -->
+                <circle cx="128" cy="128" r="90" stroke="rgba(100,255,200,0.35)" stroke-width="0.5"/>
+                <!-- Icon at 48% scale -->
+                <g transform="translate(66.6, 66.6) scale(0.48)">
+                  <path
+                    fill="rgba(160,255,230,0.55)"
+                    stroke="none"
+                    d="M249.94,120.24l-27.05-6.76a95.86,95.86,0,0,0-80.37-80.37l-6.76-27a8,8,0,0,0-15.52,0l-6.76,27.05a95.86,95.86,0,0,0-80.37,80.37l-27,6.76a8,8,0,0,0,0,15.52l27.05,6.76a95.86,95.86,0,0,0,80.37,80.37l6.76,27.05a8,8,0,0,0,15.52,0l6.76-27.05a95.86,95.86,0,0,0,80.37-80.37l27.05-6.76a8,8,0,0,0,0-15.52Zm-95.49,22.9L139.31,128l15.14-15.14L215,128Zm-52.9,0L41,128l60.57-15.14L116.69,128ZM205.77,109.2,158.6,97.4,146.8,50.23A79.88,79.88,0,0,1,205.77,109.2Zm-62.63-7.65L128,116.69l-15.14-15.14L128,41ZM109.2,50.23,97.4,97.4,50.23,109.2A79.88,79.88,0,0,1,109.2,50.23Zm-59,96.57L97.4,158.6l11.8,47.17A79.88,79.88,0,0,1,50.23,146.8Zm62.63,7.65L128,139.31l15.14,15.14L128,215Zm33.94,51.32,11.8-47.17,47.17-11.8A79.88,79.88,0,0,1,146.8,205.77Z"/>
+                </g>
+            </svg>
+            <span class="gift-number">✦ Letter IV ✦</span>
+            <div class="gift-label">Open when you <br/>feel lost</div>
+            <div class="gift-status">
+              <span class="gift-dot"></span>
+              <span id="gstatus-4">Sealed with love</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+       <!-- Card 5 — Blue -->
+       <div class="gift-card" id="gbox-5" onclick="openGift(5)">
+        <div class="gift-face">
+          <div class="gift-envelope-lines"></div>
+          <div class="gift-flap"></div>
+          <div class="wax-seal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="rgba(150,200,255,0.8)" viewBox="0 0 256 256">
+                <path d="M155.64,199.28a80,80,0,0,1,0-142.56,8,8,0,0,0,0-14.25A94.93,94.93,0,0,0,112,32a96,96,0,0,0,0,192,94.93,94.93,0,0,0,43.64-10.47,8,8,0,0,0,0-14.25ZM112,208A80,80,0,1,1,134.4,51.16a96.08,96.08,0,0,0,0,153.68A79.82,79.82,0,0,1,112,208Zm139.17-87.35-26.5-11.43-2.31-29.84a8,8,0,0,0-14.14-4.47L189.63,97.42l-27.71-6.85a8,8,0,0,0-8.81,11.82L168.18,128l-15.07,25.61a8,8,0,0,0,8.81,11.82l27.71-6.85,18.59,22.51a8,8,0,0,0,14.14-4.47l2.31-29.84,26.5-11.43a8,8,0,0,0,0-14.7ZM213.89,134a8,8,0,0,0-4.8,6.73l-1.15,14.89-9.18-11.11a8,8,0,0,0-6.17-2.91,8.4,8.4,0,0,0-1.92.23l-14.12,3.5,7.81-13.27a8,8,0,0,0,0-8.12l-7.81-13.27,14.12,3.5a8,8,0,0,0,8.09-2.68l9.18-11.11,1.15,14.89a8,8,0,0,0,4.8,6.73l13.92,6Z">
+                </path>
+            </svg>
+          </div>
+          <svg class="gift-corner tl" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <svg class="gift-corner tr" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <svg class="gift-corner bl" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <svg class="gift-corner br" viewBox="0 0 20 20"><path d="M2 18 L2 2 L18 2" stroke="rgba(220,170,80,0.8)" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="2" fill="rgba(220,170,80,0.6)"/></svg>
+          <div class="gift-inner">
+            <svg class="gift-ornament" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Outer dashed ring -->
+                <circle cx="128" cy="128" r="118" stroke="rgba(100,255,200,0.2)" stroke-width="0.6" stroke-dasharray="10 7"/>
+                <!-- Inner solid ring -->
+                <circle cx="128" cy="128" r="90" stroke="rgba(100,255,200,0.35)" stroke-width="0.5"/>
+                <!-- Icon at 48% scale -->
+                <g transform="translate(66.6, 66.6) scale(0.48)">
+                   <path fill="rgba(150,200,255,1)" d="M155.64,199.28a80,80,0,0,1,0-142.56,8,8,0,0,0,0-14.25A94.93,94.93,0,0,0,112,32a96,96,0,0,0,0,192,94.93,94.93,0,0,0,43.64-10.47,8,8,0,0,0,0-14.25ZM112,208A80,80,0,1,1,134.4,51.16a96.08,96.08,0,0,0,0,153.68A79.82,79.82,0,0,1,112,208Zm139.17-87.35-26.5-11.43-2.31-29.84a8,8,0,0,0-14.14-4.47L189.63,97.42l-27.71-6.85a8,8,0,0,0-8.81,11.82L168.18,128l-15.07,25.61a8,8,0,0,0,8.81,11.82l27.71-6.85,18.59,22.51a8,8,0,0,0,14.14-4.47l2.31-29.84,26.5-11.43a8,8,0,0,0,0-14.7ZM213.89,134a8,8,0,0,0-4.8,6.73l-1.15,14.89-9.18-11.11a8,8,0,0,0-6.17-2.91,8.4,8.4,0,0,0-1.92.23l-14.12,3.5,7.81-13.27a8,8,0,0,0,0-8.12l-7.81-13.27,14.12,3.5a8,8,0,0,0,8.09-2.68l9.18-11.11,1.15,14.89a8,8,0,0,0,4.8,6.73l13.92,6Z"/>
+                </g>
+            </svg>
+            <span class="gift-number">✦ Letter V ✦</span>
+            <div class="gift-label">Open when you <br/> need a Smile</div>
+            <div class="gift-status">
+              <span class="gift-dot"></span>
+              <span id="gstatus-5">Sealed with love</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Mini Game -->
+  <section id="game">
+    <div class="section-title">Catch the Hearts</div>
+    <div class="section-sub">tap every heart before it floats away</div>
+    <div id="game-area">
+      <div class="game-idle-msg" id="game-idle">Press start to play ✨</div>
+      <div id="game-reward"></div>
+    </div>
+    <div class="game-score" id="game-score">Hearts caught: <span id="score-val">0</span> / <span id="score-goal">10</span></div>
+    <button id="game-start-btn" onclick="startGame()">Start ✦</button>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Hidden Messages -->
+  <section id="hidden-messages">
+    <div class="section-title">Little Secrets</div>
+    <div class="section-sub">some things are hidden in plain sight — find them all</div>
+    <div class="sparkle-field" id="sparkle-field"></div>
+    <p style="font-family:var(--font-body);font-style:italic;color:var(--muted);font-size:0.9rem;margin-top:10px;">
+      Click the stars to find hidden messages
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Polaroid Wall -->
+  <section id="polaroid-wall">
+    <div class="section-title">Our Scrapbook</div>
+    <div class="section-sub">click any photo to flip it</div>
+    <div class="wall-grid">
+      <!-- === REPLACE: Update src with your own photo URLs & captions === -->
+      <div class="wall-polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="tape"></div>
+        <div class="p-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG-20250520-WA0002.jpg&q=80" alt="memory"/>
+          <div class="p-label">We look soooo cute together</div>
+        </div>
+        <div class="p-back"><p>The makeout session in car that day ....uffff🌊</p></div>
+      </div>
+      <div class="wall-polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="tape"></div>
+        <div class="p-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG-20250927-WA0024.jpg" alt="memory"/>
+          <div class="p-label">I love you soooo muchhhh✨</div>
+        </div>
+        <div class="p-back"><p>I want to kiss you everyday. Forever and ever</p></div>
+      </div>
+      <div class="wall-polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="tape"></div>
+        <div class="p-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG-20250927-WA0092.jpg" alt="memory"/>
+          <div class="p-label">Garba night</div>
+        </div>
+        <div class="p-back"><p>Bas ek promise karo...har song pr you'll be my dance partner 💑</p></div>
+      </div>
+      <div class="wall-polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="tape"></div>
+        <div class="p-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG-20251225-WA0023.jpg" alt="memory"/>
+          <div class="p-label">Best christmas everrrr</div>
+        </div>
+        <div class="p-back"><p>Us solving mysteries. Together. 💑</p></div>
+      </div>
+      <div class="wall-polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="tape"></div>
+        <div class="p-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG_20250426_181952.jpg" alt="memory"/>
+          <div class="p-label">mcd date or shall i say hangout </div>
+        </div>
+        <div class="p-back"><p>Iss din humein parking lot se jaana pada tha 🚗</p></div>
+      </div>
+      <div class="wall-polaroid" onclick="this.classList.toggle('flipped')">
+        <div class="tape"></div>
+        <div class="p-front">
+          <img src="https://raw.githubusercontent.com/muski02/happy-bithday/refs/heads/main/IMG_8969.jpg" alt="memory"/>
+          <div class="p-label">My favourite pic</div>
+        </div>
+        <div class="p-back"><p>This is my man ....He is the best muuuuuaaaaahhhhhhh</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Reasons I Love You -->
+  <section id="reasons">
+    <div class="section-title">Reasons I Love You</div>
+    <div class="section-sub">you might not even know all of them</div>
+    <button class="reason-btn" onclick="showReason()">Do you even know? 💖</button>
+    <div class="reason-card">
+      <span class="reason-number" id="reason-num"># —</span>
+      <div>
+        <span class="reason-icon" id="reason-icon">💕</span>
+        <div class="reason-text" id="reason-text">Click the button to find out…</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Secret Section Hint -->
+  <div id="secret-hint">
+    <p style="font-family:var(--font-display);font-style:italic;color:var(--blush);font-size:1.3rem;">
+      You've seen everything…<br/>or maybe not.
+    </p>
+    <div id="secret-box" onclick="revealSecret()">
+      <!-- Locked box -->
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+        <rect x="15" y="45" width="70" height="50" rx="8" fill="rgba(232,84,122,0.2)" stroke="#e8547a" stroke-width="2"/>
+        <path d="M35 45 V30 C35 18 65 18 65 30 V45" stroke="#e8547a" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <circle cx="50" cy="68" r="8" fill="#e8547a" opacity="0.8"/>
+        <line x1="50" y1="74" x2="50" y2="82" stroke="#e8547a" stroke-width="3" stroke-linecap="round"/>
+        <text x="50" y="30" fill="#f0c060" font-size="10" text-anchor="middle" font-family="serif">✦</text>
+      </svg>
+      <p style="font-family:var(--font-ui);font-size:0.7rem;letter-spacing:0.1em;color:var(--muted);margin-top:8px;">
+        CLICK TO UNLOCK
+      </p>
+    </div>
+  </div>
+
+  <!-- Final Secret Section -->
+  <section id="secret-section">
+    <div class="section-title">This One's Just For You</div>
+    <div class="section-sub">you earned it</div>
+
+    <!-- === REPLACE: Replace this with your video URL or embed code === -->
+    <div class="video-container">
+      <iframe
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+        title="Our video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+      <!-- Or use: <video src="YOUR_VIDEO_FILE.mp4" controls></video> -->
+    </div>
+
+    <!-- === REPLACE: Edit the final letter below === -->
+    <div class="final-letter" id="final-letter"></div>
+  </section>
+
+</div><!-- end #main-site -->
+
+<!-- Audio elements -->
+<!--
+  === REPLACE: Replace these src attributes with your actual audio files ===
+  Recommended format: .mp3
+-->
+<audio id="bg-music" loop>
+  <source src="https://gmswczmekosjqdhkqgaj.supabase.co/storage/v1/object/public/audios/Elvis%20Presley%20-%20Can't%20Help%20Falling%20In%20Love%20With%20You%20Instrumental.mp3" type="audio/mpeg"/>
+  <!-- REPLACE with your romantic background music -->
+</audio>
+<audio id="heartbeat-sfx">
+  <!-- REPLACE with heartbeat.mp3 -->
+</audio>
+<audio id="voice-1">
+  <!-- REPLACE with voice_note_1.mp3 -->
+</audio>
+<audio id="voice-2">
+  <!-- REPLACE with voice_note_2.mp3 -->
+</audio>
+<audio id="voice-3">
+  <!-- REPLACE with voice_note_3.mp3 -->
+</audio>
+<audio id="voice-4">
+  <!-- REPLACE with voice_note_3.mp3 -->
+</audio>
+<audio id="voice-5">
+  <!-- REPLACE with voice_note_3.mp3 -->
+</audio>
+<script>
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cursor.style.left=mx+'px';cursor.style.top=my+'px';
+});
+(function animRing(){
+  rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;
+  cursorRing.style.left=rx+'px';cursorRing.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+// Hide cursor on touch devices
+if('ontouchstart' in window){cursor.style.display='none';cursorRing.style.display='none';}
+
+/* ============================================================
+   PARTICLES
+   ============================================================ */
+const pCanvas = document.getElementById('particles-canvas');
+const pCtx = pCanvas.getContext('2d');
+let particles = [];
+
+function resizeParticles(){
+  pCanvas.width = window.innerWidth;
+  pCanvas.height = window.innerHeight;
+}
+resizeParticles();
+window.addEventListener('resize', resizeParticles);
+
+const EMOJIS = ['♥','✦','✧','·','°'];
+
+class Particle {
+  constructor(){this.reset(true)}
+  reset(init=false){
+    this.x = Math.random()*pCanvas.width;
+    this.y = init ? Math.random()*pCanvas.height : pCanvas.height + 20;
+    this.size = Math.random()*10+6;
+    this.speed = Math.random()*0.4+0.15;
+    this.opacity = Math.random()*0.35+0.05;
+    this.drift = (Math.random()-0.5)*0.3;
+    this.emoji = EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+    this.rotation = Math.random()*Math.PI*2;
+    this.rotSpeed = (Math.random()-0.5)*0.02;
+  }
+  update(){
+    this.y -= this.speed;
+    this.x += this.drift;
+    this.rotation += this.rotSpeed;
+    if(this.y < -30) this.reset();
+  }
+  draw(){
+    pCtx.save();
+    pCtx.globalAlpha = this.opacity;
+    pCtx.translate(this.x,this.y);
+    pCtx.rotate(this.rotation);
+    pCtx.font = `${this.size}px serif`;
+    pCtx.fillStyle = document.body.classList.contains('light-mode') ? '#c0395a' : '#f7a8be';
+    pCtx.textAlign = 'center';
+    pCtx.fillText(this.emoji,0,0);
+    pCtx.restore();
+  }
+}
+
+for(let i=0;i<55;i++) particles.push(new Particle());
+
+function animParticles(){
+  pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
+  particles.forEach(p=>{p.update();p.draw();});
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+/* ============================================================
+   LANDING PAGE — TYPEWRITER + HEART HOLD
+   ============================================================ */
+const landingText = document.getElementById('landing-text');
+const heartHold = document.getElementById('heart-hold');
+const holdProgress = document.getElementById('hold-progress');
+
+const LINES = [
+  "Hey… I made something for you.",
+  "But you have to feel it, not just see it."
+];
+
+async function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+async function typeText(el, text, speed=55){
+  for(let i=0;i<=text.length;i++){
+    el.innerHTML = text.slice(0,i) + '<span class="cursor-blink"></span>';
+    await sleep(speed + Math.random()*30);
+  }
+}
+
+async function eraseText(el, speed=35){
+  const text = el.textContent;
+  for(let i=text.length;i>=0;i--){
+    el.innerHTML = text.slice(0,i) + '<span class="cursor-blink"></span>';
+    await sleep(speed);
+  }
+}
+
+async function runLanding(){
+  await sleep(600);
+  landingText.classList.add('visible');
+  await typeText(landingText, LINES[0]);
+  await sleep(1800);
+  await eraseText(landingText);
+  await sleep(400);
+  await typeText(landingText, LINES[1]);
+  await sleep(1600);
+  // Remove cursor blink
+  landingText.innerHTML = LINES[1];
+  await sleep(500);
+  heartHold.classList.add('visible');
+}
+runLanding();
+
+// Heart hold interaction
+let holdTimer = null;
+let holdInterval = null;
+let holdDeg = 0;
+let isHolding = false;
+
+function startHold(){
+  if(isHolding) return;
+  isHolding = true;
+  heartHold.classList.add('holding');
+  // Try heartbeat SFX
+  try{
+    const hb = document.getElementById('heartbeat-sfx');
+    if(hb && hb.src) hb.play().catch(()=>{});
+  }catch(e){}
+  holdDeg = 0;
+  holdInterval = setInterval(()=>{
+    holdDeg += 6;
+    holdProgress.style.background = `conic-gradient(var(--rose) ${holdDeg}deg, transparent ${holdDeg}deg)`;
+    // Increase brightness
+    const ratio = holdDeg/360;
+    document.getElementById('landing').style.background =
+      `radial-gradient(ellipse at 50% 60%, rgba(80,${Math.floor(ratio*30)},${Math.floor(ratio*50)},1) 0%, rgba(${Math.floor(ratio*20)},${Math.floor(ratio*5)},${Math.floor(ratio*8)},1) 70%)`;
+    heartHold.querySelector('.heart-svg').style.filter =
+      `drop-shadow(0 0 ${20+ratio*60}px var(--rose)) drop-shadow(0 0 ${40+ratio*100}px rgba(232,84,122,${0.5+ratio*0.5}))`;
+    if(holdDeg >= 360){
+      clearInterval(holdInterval);
+      transitionToMain();
+    }
+  }, 50);
+}
+
+function endHold(){
+  if(!isHolding) return;
+  isHolding = false;
+  heartHold.classList.remove('holding');
+  clearInterval(holdInterval);
+  // Reset if not completed
+  if(holdDeg < 360){
+    holdDeg = 0;
+    holdProgress.style.background = `conic-gradient(var(--rose) 0deg, transparent 0deg)`;
+    document.getElementById('landing').style.background = '';
+    heartHold.querySelector('.heart-svg').style.filter = '';
+  }
+}
+
+heartHold.addEventListener('mousedown', startHold);
+heartHold.addEventListener('touchstart', e=>{e.preventDefault();startHold();},{passive:false});
+document.addEventListener('mouseup', endHold);
+document.addEventListener('touchend', endHold);
+
+function transitionToMain(){
+  // Start bg music
+  try{
+    const bgm = document.getElementById('bg-music');
+    bgm.volume = 0.18;
+    bgm.play().catch(()=>{});
+  }catch(e){}
+  const landing = document.getElementById('landing');
+  landing.classList.add('fade-out');
+  document.getElementById('theme-toggle').classList.add('visible');
+  setTimeout(()=>{
+    landing.style.display='none';
+    const main = document.getElementById('main-site');
+    main.classList.add('visible');
+    initHiddenMessages();
+  }, 1500);
+}
+
+/* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+function toggleTheme(){
+  document.body.classList.toggle('light-mode');
+  const lbl = document.getElementById('theme-label');
+  if(document.body.classList.contains('light-mode')){
+    lbl.textContent = 'With you ☀️';
+  } else {
+    lbl.textContent = 'Missing you 🌙';
+  }
+}
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+window.addEventListener('scroll',()=>{
+  const max = document.body.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY/max*100).toFixed(1);
+  document.getElementById('progress-bar').style.width = pct+'%';
+  checkSecretUnlock();
+});
+
+/* ============================================================
+   GIFT BOXES
+   ============================================================ */
+const giftOpened = {1:false,2:false,3:false,4:false,5:false};
+
+// === REPLACE: Edit the letter text for each gift box below ===
+const LETTERS = {
+  1: `Hey bhondu billu 🐱
+
+You miss me? Hmm… makes sense.
+
+Do you remember the trampoline day?
+Because I do… a little too clearly.
+
+That was the first time I felt something shift.
+Like it wasn't just random conversations and cat memes anymore.
+
+Every time you miss me, I want you to know that somewhere in the world — in this exact moment — I am thinking of you too. Not because I have to, but because you are the thought that always finds its way back.
+
+Close your eyes for a moment and feel this: I am right there.
+Always have been. Or Go eat something (preferably dosa so you can think of me), stop acting sad. I miss you toooooo.
+
+All my love,
+Muskii 💕`,
+
+  2: `Hello??? 🤨
+
+You… doubting my love??
+Bhongu Haggu, have you lost it?
+
+Do you really think I'd survive all your ragebait just to not love you? Please. That itself proves my commitment.
+
+I love you even when you purposely say things just to irritate me.
+Even when you act dumb.
+Even when you overthink a lot
+
+And honestly… after that one drunk moment when you said,
+“I want my kids to have your eyes”…
+yeah, you're not escaping me after that 😭
+
+So stop overthinking. Your brain is lying.
+I'm right here. Fully yours.
+
+— your kuchipuchi (non-refundable) 💘`,
+
+  3: `OOOhhhhooooo...future plannings chal rhi h.. anyways
+
+Hi bubu,
+
+When I think about us, it's not anything fancy.
+
+It's small things.
+
+You eating chatpata khana and me stealing from your plate.
+Random arguments that end with you giving up.
+Sending cat memes or dudu bubu reels even when we're in the same room.
+
+And a home that feels light… a little chaotic, a little stupid… but warm.
+
+Also yeah—our kids?
+They're definitely going to be weird. We've already accepted that.
+
+But if they're anything like you… gentle, soft, quietly caring—
+I think they'll be just fine.
+
+I don't know everything about the future.
+But I know I want to experience it with you.
+
+always choosing you 
+Muskii💍`,
+
+  4: `My love,
+
+Feeling lost is not the same as being lost.
+
+You don't have to have everything figured out right now.
+
+I know it feels confusing. Like you're stuck or falling behind.
+But you're not.
+
+You're just in a phase where things aren't clear yet.
+And that's okay.
+
+You don't always have to be strong or sorted.
+
+Even the person who makes stupid jokes, ragebaits me, and acts all chill…
+he's allowed to feel lost too.
+
+Just don't disappear when you feel like this.
+
+Come to me. Just like how you have become my anti-panic button, let me be yours.
+
+I'm here. I'm not going anywhere.
+
+your safe place 
+Muskii🤍`,
+
+  5: `HELLO 😤
+
+Whya are you sad when you are literally the same person who acts like drooling capy every now and then to make me laugh.
+
+I'm going to need you to smile right now.
+Yes...That's a dirrect order.
+Follow it ...pweaaseee...puchi dungiii
+
+My pyaare bubu, I probably know why you are sad and need to smile right now. So just call me na. 
+
+Okay let me remind you of our funny moment if I can think of....socho sochooo
+haaann remember chaddi mein ulti wala moment ....we laughed our asses off😂
+
+Bubu ab bohot hua this is a warning call kro mujhe samjheeeee.
+
+Kuch kha bhi lena ...Chatpata 
+
+I love you.
+(And then tell me about it — I want every detail.)
+
+Yours, always and with the biggest grin,
+Muskii 😄💙`
+};
+
+function openGift(num){
+  const box = document.getElementById(`gbox-${num}`);
+  box.classList.add('shaking');
+  setTimeout(()=>{
+    box.classList.remove('shaking');
+    box.classList.add('opened');
+    // Start typing letter
+    const overlay = document.getElementById(`gift-overlay-${num}`);
+    overlay.classList.add('active');
+    document.body.style.overflow='hidden';
+    const letterEl = document.getElementById(`letter-${num}`);
+    letterEl.textContent='';
+    typeLetterEffect(letterEl, LETTERS[num]);
+    if(!giftOpened[num]){
+      giftOpened[num]=true;
+      checkAllGiftsOpened();
+    }
+  }, 400);
+}
+
+function closeGift(num){
+  const overlay = document.getElementById(`gift-overlay-${num}`);
+  overlay.classList.remove('active');
+  document.body.style.overflow='';
+}
+
+// Close on overlay click
+document.querySelectorAll('.gift-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{
+    if(e.target===o){
+      o.classList.remove('active');
+      document.body.style.overflow='';
+    }
+  });
+});
+
+async function typeLetterEffect(el, text, speed=22){
+  el.textContent='';
+  for(let i=0;i<=text.length;i++){
+    el.textContent = text.slice(0,i);
+    await sleep(speed + Math.random()*20);
+  }
+}
+
+function playVoice(num){
+  const audio = document.getElementById(`voice-${num}`);
+  if(audio && audio.src && audio.src !== window.location.href){
+    audio.play().catch(()=>{
+      alert("Voice note audio not loaded yet. Replace the audio src in the HTML file. 🎙️");
+    });
+  } else {
+    // Show friendly message
+    showToast("🎙️ Replace voice-" + num + " audio src with your voice note file!");
+  }
+}
+
+function showToast(msg){
+  const popup = document.getElementById('hidden-msg-popup');
+  popup.textContent = msg;
+  popup.classList.add('show');
+  setTimeout(()=>popup.classList.remove('show'),3000);
+}
+
+/* ============================================================
+   MINI GAME: CATCH THE HEARTS
+   ============================================================ */
+const GOAL = 10;
+let score = 0;
+let gameActive = false;
+let gameHearts = [];
+let gameLoop = null;
+
+// === REPLACE: Edit heart messages below ===
+const HEART_MSGS = [
+  "You make my world softer 🌸",
+  "I'd choose you again and again 💕",
+  "You are incredibly loved 💖",
+  "My favorite thing is your laugh ✨",
+  "You deserve every beautiful thing 🌹",
+  "You are my home 🏠",
+  "Thank you for existing 💫",
+  "I notice every little thing about you 👁️",
+  "You make ordinary moments magic ✨",
+  "I love the way you think 💭",
+  "You are enough. Always. 🌙",
+  "My heart knows it's you 💗",
+  "Counting down to our next moment ⏳",
+  "You make everything feel safe 🤍",
+  "I would do it all again for you 🔄"
+];
+
+function startGame(){
+  if(gameActive) return;
+  gameActive = true;
+  score = 0;
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('score-goal').textContent = GOAL;
+  document.getElementById('game-idle').style.display='none';
+  document.getElementById('game-reward').classList.remove('visible');
+  document.getElementById('game-reward').style.display='none';
+  document.getElementById('game-start-btn').style.display='none';
+  spawnHearts();
+}
+
+function spawnHearts(){
+  if(!gameActive) return;
+  spawnHeart();
+  const delay = Math.max(400, 900 - score*40);
+  gameLoop = setTimeout(spawnHearts, delay);
+}
+
+function spawnHeart(){
+  const area = document.getElementById('game-area');
+  const el = document.createElement('div');
+  el.className = 'game-heart';
+  el.textContent = ['💖','💗','💕','💓','❤️','🩷'][Math.floor(Math.random()*6)];
+  const x = Math.random() * (area.clientWidth - 50);
+  const dur = Math.random()*2.5+2.5;
+  const tilt = (Math.random()-0.5)*25;
+  el.style.cssText = `left:${x}px;bottom:0;animation-duration:${dur}s;--tilt:${tilt}deg`;
+  el.addEventListener('click', ()=>catchHeart(el));
+  el.addEventListener('touchstart', (e)=>{e.preventDefault();catchHeart(el);},{passive:false});
+  area.appendChild(el);
+  gameHearts.push(el);
+  el.addEventListener('animationend',()=>{
+    el.remove();
+    gameHearts = gameHearts.filter(h=>h!==el);
+  });
+}
+
+function catchHeart(el){
+  if(!gameActive) return;
+  const area = document.getElementById('game-area');
+  const rect = el.getBoundingClientRect();
+  const aRect = area.getBoundingClientRect();
+  // Show message
+  const msg = document.createElement('div');
+  msg.className = 'game-message-popup';
+  msg.textContent = HEART_MSGS[score % HEART_MSGS.length];
+  msg.style.left = (rect.left - aRect.left - 60) + 'px';
+  msg.style.top = (rect.top - aRect.top) + 'px';
+  area.appendChild(msg);
+  msg.addEventListener('animationend',()=>msg.remove());
+  el.remove();
+  gameHearts = gameHearts.filter(h=>h!==el);
+  score++;
+  document.getElementById('score-val').textContent = score;
+  if(score >= GOAL) endGame();
+}
+
+function endGame(){
+  gameActive = false;
+  clearTimeout(gameLoop);
+  gameHearts.forEach(h=>h.remove());
+  gameHearts=[];
+  const reward = document.getElementById('game-reward');
+  reward.style.display='block';
+  reward.innerHTML = `🎉 You caught all ${GOAL} hearts!<br/><br/>
+    <span style="font-size:1rem;color:var(--muted)">Just like you've always caught mine.</span>`;
+  reward.classList.add('visible');
+  const restart = document.getElementById('game-restart-btn') || createRestartBtn();
+  restart.style.display='inline-block';
+}
+
+function createRestartBtn(){
+  const btn = document.createElement('button');
+  btn.id='game-restart-btn';
+  btn.textContent='Play Again ✦';
+  btn.onclick=()=>{
+    document.getElementById('game-reward').style.display='none';
+    document.getElementById('game-reward').classList.remove('visible');
+    btn.style.display='none';
+    startGame();
+  };
+  document.getElementById('game').appendChild(btn);
+  return btn;
+}
+
+/* ============================================================
+   HIDDEN MESSAGES (SPARKLES)
+   ============================================================ */
+// === REPLACE: Edit hidden messages below ===
+const HIDDEN_MSGS = [
+  "You're the best thing that happened to me ✨",
+  "I replay our first meeting more than I admit 💭",
+  "Your smile is my favorite thing in the world 😊",
+  "I daydream about our times together 💋",
+  "You make me want to be better 💪",
+  "I can't imagine my life without you 🥺",
+  "Thinking of you is my favorite distraction 💕",
+  "You have the most beautiful soul 🌸",
+  "I love the way you look when you say i love you 🩷",
+  "I'm proud of you every single day 🏆",
+  "You are genuinely magic ✨",
+  "I love you more than any words can say 💖"
+];
+
+function initHiddenMessages(){
+  const field = document.getElementById('sparkle-field');
+  const shapes = ['✦','★','✧','✩','⋆','·','°','⭑'];
+  for(let i=0;i<HIDDEN_MSGS.length;i++){
+    const el = document.createElement('div');
+    el.className = 'sparkle';
+    el.textContent = shapes[i % shapes.length];
+    el.style.left = (5 + Math.random()*88) + '%';
+    el.style.top = (5 + Math.random()*85) + '%';
+    el.style.animationDelay = (Math.random()*3)+'s';
+    el.style.animationDuration = (2+Math.random()*2)+'s';
+    el.style.fontSize = (0.8 + Math.random()*0.8) + 'rem';
+    el.style.color = Math.random()>0.5 ? 'var(--gold)' : 'var(--blush)';
+    el.dataset.msg = HIDDEN_MSGS[i];
+    el.addEventListener('click',()=>revealHiddenMsg(el));
+    el.addEventListener('touchstart',e=>{e.preventDefault();revealHiddenMsg(el);},{passive:false});
+    field.appendChild(el);
+  }
+}
+
+let popupTimer = null;
+function revealHiddenMsg(el){
+  el.classList.add('revealed');
+  el.textContent = '💫';
+  const popup = document.getElementById('hidden-msg-popup');
+  popup.textContent = el.dataset.msg;
+  popup.classList.add('show');
+  clearTimeout(popupTimer);
+  popupTimer = setTimeout(()=>popup.classList.remove('show'),3500);
+}
+
+/* ============================================================
+   REASONS I LOVE YOU
+   ============================================================ */
+// === REPLACE: Add/edit reasons below (minimum 25) ===
+const REASONS = [
+  {icon:'🤍',text:"Because with you, I don't feel like I have to be anything other than myself"},
+  {icon:'🌙',text:"Because you make me feel chosen in quiet, real ways"},
+  {icon:'🕊️',text:"Because you bring a kind of calm I didn't know I needed"},
+  {icon:'🧷',text:"Because you stayed when things could've been easy to walk away from"},
+  {icon:'🤍',text:"Because you understand me without me having to explain everything"},
+  {icon:'🧸',text:"Because you're soft in ways that actually matter"},
+  {icon:'🏡',text:"Because you make “us” feel safe, not uncertain"},
+  {icon:'✨',text:"Because you turned something casual into something meaningful"},
+  {icon:'🌸',text:"Because you make me feel like I belong somewhere"},
+  {icon:'💌',text:"Because loving you feels natural, not forced"},
+  {icon:'🥚',text:"Because you say “egg zactly” like it's 100% correct"},
+  {icon:'😗',text:"Because you ragebait me and still act innocent after"},
+  {icon:'🥞',text:"Because you love dosa like it's your entire personality"},
+  {icon:'🎀',text:"Because you always help me calm down when I panic"},
+  {icon:'📱',text:"Because we can sit together and talk about utter noncence and send memes"},
+  {icon:'🐈',text:"Because you're lowkey a bhondu billu and I find that cute"},
+  {icon:'🪞',text:"Because you act normal in public like I don't know your real personality"},
+  {icon:'🍽️',text:"Because you have a Chatori zuban just like me"},
+  {icon:'🫠',text:"Because you somehow match my weird instead of questioning it"},
+  {icon:'🎠',text:"Because being with you feels like controlled chaos"},
+  {icon:'🫶',text:"Because you annoy me daily and I still haven't blocked you—growth"},
+  {icon:'🤍',text:"Because out of all people… you are the one I chose"},
+  {icon:'🎭',text:"Because you try to win arguments but end up surrendering anyway"},
+  {icon:'💋',text:"Because you're lucky I find you cute, otherwise harkate toh h pitne wali"},
+  {icon:'🐾',text:"Because honestly… you'd be a little lost without me."},
+];
+let lastReason = -1;
+function showReason(){
+  let idx;
+  do { idx = Math.floor(Math.random()*REASONS.length); } while(idx===lastReason);
+  lastReason = idx;
+  const r = REASONS[idx];
+  const el = document.getElementById('reason-text');
+  const icon = document.getElementById('reason-icon');
+  const num = document.getElementById('reason-num');
+  el.classList.remove('show');
+  setTimeout(()=>{
+    icon.textContent = r.icon;
+    el.textContent = r.text;
+    num.textContent = `# ${idx+1}`;
+    el.classList.add('show');
+  }, 300);
+}
+
+/* ============================================================
+   SECRET SECTION UNLOCK
+   ============================================================ */
+function checkAllGiftsOpened(){
+  if(giftOpened[1] && giftOpened[2] && giftOpened[3]){
+    setTimeout(()=>{
+      document.getElementById('secret-hint').classList.add('visible');
+    }, 800);
+  }
+}
+
+function checkSecretUnlock(){
+  // Also trigger on scroll if all gifts opened
+  if(giftOpened[1] && giftOpened[2] && giftOpened[3]){
+    document.getElementById('secret-hint').classList.add('visible');
+  }
+}
+
+// === REPLACE: Edit the final letter below ===
+const FINAL_LETTER = `There is a version of this letter that is longer,
+more articulate, perfectly structured.
+
+But the truth is simple:
+
+You are the most extraordinary person
+I have ever had the privilege of knowing.
+
+Not because of what you do,
+or how you look,
+or any of the measurable things.
+
+But because of who you are
+when no one is watching.
+When you're tired.
+When things are hard.
+
+That's the person I love.
+
+Happy birthday, my love.
+
+May this year give you everything you deserve
+— and you deserve the whole world.
+
+I love you. I love you. I love you.
+
+Always,
+Me 💖`;
+
+let secretRevealed = false;
+function revealSecret(){
+  if(secretRevealed) return;
+  secretRevealed = true;
+  document.getElementById('secret-box').style.opacity='0';
+  document.getElementById('secret-box').style.pointerEvents='none';
+  const sec = document.getElementById('secret-section');
+  sec.classList.add('revealed');
+  // Type final letter
+  const fl = document.getElementById('final-letter');
+  typeLetterEffect(fl, FINAL_LETTER, 30);
+  // Confetti
+  launchConfetti();
+  // Increase music volume slightly
+  try{
+    const bgm = document.getElementById('bg-music');
+    bgm.volume = Math.min(bgm.volume+0.1, 0.35);
+  }catch(e){}
+  // Scroll to section
+  setTimeout(()=>sec.scrollIntoView({behavior:'smooth',block:'start'}), 300);
+}
+
+/* ============================================================
+   CONFETTI
+   ============================================================ */
+function launchConfetti(){
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.style.display='block';
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const pieces = [];
+  const colors = ['#e8547a','#f7a8be','#f0c060','#b8e0ff','#d4b8ff','#ffd6e0'];
+  for(let i=0;i<150;i++){
+    pieces.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height - canvas.height,
+      w:Math.random()*10+5,h:Math.random()*6+3,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      speed:Math.random()*3+1,
+      drift:(Math.random()-0.5)*2,
+      rot:Math.random()*Math.PI*2,
+      rotSpeed:(Math.random()-0.5)*0.15
+    });
+  }
+  let frame=0;
+  function drawConfetti(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle=p.color;
+      ctx.globalAlpha=0.85;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+      p.y+=p.speed;p.x+=p.drift;p.rot+=p.rotSpeed;
+      if(p.y>canvas.height+20){p.y=-20;p.x=Math.random()*canvas.width;}
+    });
+    frame++;
+    if(frame<400) requestAnimationFrame(drawConfetti);
+    else{ctx.clearRect(0,0,canvas.width,canvas.height);canvas.style.display='none';}
+  }
+  drawConfetti();
+}
+
+/* ============================================================
+   DEMO: Auto-open shortcut for testing (remove in production)
+   All 3 gifts unlocked via URL param ?demo=1
+   ============================================================ */
+if(new URLSearchParams(location.search).get('demo')==='1'){
+  window.addEventListener('load',()=>{
+    setTimeout(()=>{
+      transitionToMain();
+      giftOpened[1]=giftOpened[2]=giftOpened[3]=true;
+      checkAllGiftsOpened();
+    },500);
+  });
+}
+
+/* ============================================================
+   KEYBOARD SHORTCUT: Press Space on landing to skip (testing)
+   ============================================================ */
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space' && document.getElementById('landing').style.display!=='none'){
+    e.preventDefault();
+    transitionToMain();
+    giftOpened[1]=giftOpened[2]=giftOpened[3]=true;
+    checkAllGiftsOpened();
+  }
+});
+
+/* ============================================================
+   BACKGROUND MUSIC — user gesture fallback
+   ============================================================ */
+function tryStartMusic(){
+  const bgm = document.getElementById('bg-music');
+  if(bgm && bgm.paused && bgm.src){
+    bgm.volume=0.18;
+    bgm.play().catch(()=>{});
+  }
+  document.removeEventListener('click',tryStartMusic);
+  document.removeEventListener('touchstart',tryStartMusic);
+}
+document.addEventListener('click',tryStartMusic);
+document.addEventListener('touchstart',tryStartMusic);
+</script>
+</body>
+</html>
